@@ -1,0 +1,4 @@
+<i *ngIf="DESCRIPTION[class]?.icon; else defaultClass" [className]="DESCRIPTION[class].icon"></i>
+<ng-template #defaultClass>
+  <i [className]="DEFAULT_DESCRIPTION.icon"></i>
+</ng-template>
