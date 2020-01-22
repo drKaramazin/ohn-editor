@@ -20,6 +20,15 @@ export const DESCRIPTION: ClassDescription = {
   },
   [ElementClass.CSVReport]: {
     icon: 'fas fa-file-csv',
+  },
+  [ElementClass.Image]: {
+    icon: 'fas fa-file-image',
+  },
+  [ElementClass.Content]: {
+    icon: 'fas fa-box-open',
+  },
+  [ElementClass.Randomization]: {
+    icon: 'fas fa-random',
   }
 };
 

@@ -3,7 +3,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 import { Element } from '../../models/element/element';
-import { ElementClass } from '../../models/element/element-class';
+import { CurrentElementService } from '../../services/current-element.service';
 
 interface ElementNode {
   expandable: boolean;
@@ -20,8 +20,6 @@ interface ElementNode {
   styleUrls: ['./elements-tree.component.scss']
 })
 export class ElementsTreeComponent implements OnInit {
-
-  ElementClass = ElementClass;
 
   // tslint:disable-next-line:variable-name
   private _element: Element;
@@ -61,8 +59,39 @@ export class ElementsTreeComponent implements OnInit {
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
   // tslint:disable:member-ordering
 
-  constructor() {}
+  selectedElement: Element;
+
+  constructor(
+    public current: CurrentElementService,
+  ) {}
 
   ngOnInit() {}
+
+  getElement(source: Element, slug: string): Element {
+    if (source.element_slug === slug) {
+      return source;
+    } else {
+      if (source.elements) {
+        for (const element of source.elements) {
+          const target = this.getElement(element, slug);
+          if (target) {
+            return target;
+          }
+        }
+      }
+    }
+  }
+
+  hover(node: ElementNode) {
+    this.selectedElement = this.getElement(this.element, node.slug);
+  }
+
+  leave() {
+    // this.selectedElement = undefined;
+  }
+
+  click(node: ElementNode) {
+    this.current.currentElement.next(this.getElement(this.element, node.slug));
+  }
 
 }

@@ -13,18 +13,23 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material';
 import { MatProgressBarModule } from '@angular/material';
+import { MdePopoverModule } from '@material-extended/mde';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgJsonEditorModule } from 'ang-jsoneditor'
 
 import { OhnApiService } from './services/ohn-api.service';
 import { OhnAuthService } from './services/ohn-auth.service';
 import { StorageService } from './services/storage.service';
 import { ElementsTreeComponent } from './widgets/elements-tree/elements-tree.component';
 import { ElementClassIconComponent } from './widgets/element-class-icon/element-class-icon.component';
+import { CurrentElementComponent } from './widgets/current-element/current-element.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ElementsTreeComponent,
-    ElementClassIconComponent
+    ElementClassIconComponent,
+    CurrentElementComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +44,9 @@ import { ElementClassIconComponent } from './widgets/element-class-icon/element-
     MatIconModule,
     MatCardModule,
     MatProgressBarModule,
+    MdePopoverModule,
+    MatTooltipModule,
+    NgJsonEditorModule,
   ],
   providers: [
     OhnApiService,

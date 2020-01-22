@@ -4,9 +4,20 @@
     <!-- use a disabled button to provide padding for tree leaf -->
     <button mat-icon-button disabled></button>
 
-    <app-element-class-icon [class]="node.class"></app-element-class-icon>
-    &nbsp;<span class="accent-text">{{ node.controller }}</span>
-    &nbsp;{{ node.slug }}
+    <span class="element"
+          [ngClass]="{ current: (current.currentElement | async)?.element_slug === node.slug }"
+          [mdePopoverTriggerFor]="appPopover"
+          mdePopoverTriggerOn="hover"
+          [mdePopoverEnterDelay]="0"
+          [mdePopoverLeaveDelay]="0"
+          (mouseleave)="leave()"
+          (mouseenter)="hover(node)"
+          (click)="click(node)">
+      <app-element-class-icon [class]="node.class"></app-element-class-icon>
+      &nbsp;<span class="accent-text">{{ node.controller }}</span>
+      &nbsp;<span>{{ node.slug }}</span>
+    </span>
+
 
   </mat-tree-node>
   <!-- This is the tree node template for expandable nodes -->
@@ -18,9 +29,29 @@
       </mat-icon>
     </button>
 
-    <app-element-class-icon [class]="node.class"></app-element-class-icon>
-    &nbsp;<span class="accent-text">{{ node.controller }}</span>
-    &nbsp;{{node.slug}}
+    <span class="element"
+          [ngClass]="{ current: (current.currentElement | async)?.element_slug === node.slug }"
+          [mdePopoverTriggerFor]="appPopover"
+          mdePopoverTriggerOn="hover"
+          [mdePopoverEnterDelay]="0"
+          [mdePopoverLeaveDelay]="0"
+          (mouseleave)="leave()"
+          (mouseenter)="hover(node)"
+          (click)="click(node)">
+      <app-element-class-icon [class]="node.class"></app-element-class-icon>
+      &nbsp;<span class="accent-text">{{ node.controller }}</span>
+      &nbsp;<span>{{node.slug}}</span>
+    </span>
 
   </mat-tree-node>
 </mat-tree>
+
+<mde-popover #appPopover="mdePopover" [mdePopoverOverlapTrigger]="false">
+  <mat-card style="max-width: 400px">
+    <mat-card-content>
+      <div><b>{{selectedElement?.element_slug}}</b></div>
+      <div style="font-size: 90%; font-style: italic; margin-bottom: 5px;">{{selectedElement?._cls}}</div>
+      <div><span>{{selectedElement?.text}}</span></div>
+    </mat-card-content>
+  </mat-card>
+</mde-popover>

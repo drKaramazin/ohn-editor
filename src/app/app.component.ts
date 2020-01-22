@@ -5,6 +5,7 @@ import { StorageService } from './services/storage.service';
 import { Item } from './models/storage/item';
 import { Element } from './models/element/element';
 import { LoadingService } from './services/loading.service';
+import { CurrentElementService } from './services/current-element.service';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
     private ohnApi: OhnApiService,
     private storage: StorageService,
     public loading: LoadingService,
+    public current: CurrentElementService,
   ) {}
 
   getParams() {

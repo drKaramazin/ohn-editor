@@ -11,3 +11,20 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.left-panel {
+  width: 100%;
+}
+
+.left-panel.current-element-exists {
+  width: 70%;
+}
+
+.right-panel {
+  display: none;
+  width: 30%;
+}
+
+.right-panel.current-element-exists {
+  display: block;
+}
