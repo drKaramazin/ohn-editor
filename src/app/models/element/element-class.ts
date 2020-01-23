@@ -8,4 +8,5 @@ export enum ElementClass {
   Image = 'Element.Container.FieldElement.StringFieldElement.ContentElement.ImageElement',
   Content = 'Element.Container.FieldElement.StringFieldElement.ContentElement',
   Randomization = 'Element.Container.FieldElement.StringFieldElement.RandomizationElement',
+  Numeric = 'Element.Container.FieldElement.NumericFieldElement',
 }

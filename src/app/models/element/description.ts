@@ -29,6 +29,9 @@ export const DESCRIPTION: ClassDescription = {
   },
   [ElementClass.Randomization]: {
     icon: 'fas fa-random',
+  },
+  [ElementClass.Numeric]: {
+    icon: 'fas fa-square-root-alt',
   }
 };
 
