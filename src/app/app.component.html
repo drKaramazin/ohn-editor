@@ -1,11 +1,13 @@
 <nav mat-tab-nav-bar backgroundColor="primary">
-  <a mat-tab-link
-     *ngFor="let link of links.navLinks; let i = index"
-     [routerLink]="link.path"
-     routerLinkActive #rla="routerLinkActive"
-     [active]="(links.current | async) === i">
-    {{link.label}}
-  </a>
+  <ng-container *ngFor="let link of links.navLinks | async; let i = index">
+    <a mat-tab-link
+       *ngIf="link.isShow"
+       [routerLink]="link.path"
+       routerLinkActive #rla="routerLinkActive"
+       [active]="(links.current | async) === i">
+      {{link.label}}
+    </a>
+  </ng-container>
 </nav>
 
 <router-outlet></router-outlet>

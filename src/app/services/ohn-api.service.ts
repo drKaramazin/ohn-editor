@@ -148,6 +148,10 @@ export class OhnApiService {
     return this.baseDecorator(this.http.get(`${this.apiUrl}/${this.appName}/user`, this.options) as Observable<any>);
   }
 
+  getUserList(): Observable<User[]> {
+    return this.baseDecorator(this.http.get(`${this.apiUrl}/${this.appName}/user/list`, this.options) as Observable<any>);
+  }
+
   getElementHistory(elementSlug: string, period: string, shift: number): Observable<any> {
 
     return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/history/period/${period}/${shift}`, this.options)
@@ -160,11 +164,6 @@ export class OhnApiService {
       reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/history/user/` + localStorage.getItem('currentSmartContract');
     }
     return this.http.get(reqString, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getUserList(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/user/list`, this.options)
       .pipe(catchError(err => this.errorHandler(err.status)));
   }
 

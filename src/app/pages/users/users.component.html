@@ -1,0 +1,21 @@
+<mat-card>
+  <mat-card-content>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="!(auth.users | async).length || !sc; else usersBox"></mat-progress-bar>
+    <ng-template #usersBox>
+      <mat-radio-group
+        [(ngModel)]="sc"
+        aria-labelledby="example-radio-group-label"
+        class="example-radio-group">
+        <mat-radio-button class="example-radio-button"
+                          *ngFor="let user of (auth.users | async)"
+                          (change)="currentSCChanged($event)"
+                          [value]="user.smart_contract">
+          {{ user.name ? user.name : user.username }}
+          <span *ngFor="let role of user.roles" class="accent-text margin-left">{{ role }}</span>
+        </mat-radio-button>
+      </mat-radio-group>
+    </ng-template>
+
+  </mat-card-content>
+</mat-card>

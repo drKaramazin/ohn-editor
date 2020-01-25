@@ -11,7 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule, MatTabsModule } from '@angular/material';
+import { MatCardModule, MatRadioModule, MatTabsModule } from '@angular/material';
 import { MatProgressBarModule } from '@angular/material';
 import { MdePopoverModule } from '@material-extended/mde';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -26,6 +26,7 @@ import { CurrentElementComponent } from './widgets/current-element/current-eleme
 import { CredentialsComponent } from './pages/credentials/credentials.component';
 import { StructureComponent } from './pages/structure/structure.component';
 import { CurrentUserComponent } from './pages/current-user/current-user.component';
+import { UsersComponent } from './pages/users/users.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { CurrentUserComponent } from './pages/current-user/current-user.componen
     CurrentElementComponent,
     CredentialsComponent,
     StructureComponent,
-    CurrentUserComponent
+    CurrentUserComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,
@@ -54,6 +56,7 @@ import { CurrentUserComponent } from './pages/current-user/current-user.componen
     MatTooltipModule,
     NgJsonEditorModule,
     MatTabsModule,
+    MatRadioModule,
   ],
   providers: [
     OhnApiService,
