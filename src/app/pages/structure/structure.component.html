@@ -1,0 +1,35 @@
+<mat-card>
+  <mat-card-content>
+
+    <div class="buttons-container">
+      <button mat-raised-button color="primary" [disabled]="isLoading | async" (click)="browseApp()">Browse app</button>
+    </div>
+
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <div style="display: flex;">
+
+      <div class="left-panel" [ngClass]="{
+            'current-element-exists': (this.current.currentElement | async) && !(isLoading | async)
+          }">
+        <mat-progress-bar mode="indeterminate" *ngIf="isLoading | async; else treeBox"></mat-progress-bar>
+        <ng-template #treeBox>
+          <app-elements-tree [element]="element" *ngIf="element; else emptyBox"></app-elements-tree>
+          <ng-template #emptyBox>
+            Empty here, please fill the inputs and click "Browse app"
+          </ng-template>
+        </ng-template>
+      </div>
+
+      <div class="right-panel" [ngClass]="{
+            'current-element-exists': (this.current.currentElement | async) && !(isLoading | async)
+          }">
+        <app-current-element></app-current-element>
+      </div>
+
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,23 @@
+<mat-card>
+  <mat-card-content>
+
+    <div class="buttons-container">
+      <button mat-raised-button
+              color="primary"
+              [disabled]="isLoading | async"
+              (click)="getCurrentUser()">Get current user</button>
+    </div>
+
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading | async; else currentUserBox"></mat-progress-bar>
+    <ng-template #currentUserBox>
+      <pre>{{ me | json }}</pre>
+    </ng-template>
+
+  </mat-card-content>
+</mat-card>

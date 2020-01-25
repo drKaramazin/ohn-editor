@@ -95,23 +95,8 @@ export class OhnApiService {
       .pipe(catchError(err => this.errorHandler(err.status)));
   }
 
-  getElementStateSc(elementSlug: string, smartContract: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/state/smart_contract/${smartContract}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
   getElementAggregation(elementSlug: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/agg/count`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  setElementStateSc(elementSlug: string, data: any, smartContract?: string): Observable<any> {
-
-    if (smartContract !== undefined) {
-      data['smart_contract'] = smartContract;
-    }
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/state`, data, this.options)
       .pipe(catchError(err => this.errorHandler(err.status)));
   }
 
@@ -131,13 +116,36 @@ export class OhnApiService {
       .pipe(catchError(err => this.errorHandler(err.status)));
   }
 
-  getElement(elementSlug: string, depth: number): Observable<Element> {
+  getElementStateSc(elementSlug: string, smartContract: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/state/smart_contract/${smartContract}`, this.options)
+      .pipe(catchError(err => this.errorHandler(err.status)));
+  }
+
+  setElementStateSc(elementSlug: string, data: any, smartContract?: string): Observable<any> {
+
+    if (smartContract !== undefined) {
+      data['smart_contract'] = smartContract;
+    }
+
+    return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/state`, data, this.options)
+      .pipe(catchError(err => this.errorHandler(err.status)));
+  }
+
+  baseDecorator<T>(request: Observable<T>): Observable<T> {
     this.loading.addLoading();
-    return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/${this.locale}/${depth}`, this.options)
-      .pipe(
-        catchError(err => this.errorHandler(err.status)),
-        finalize(() => this.loading.removeLoading()),
-      );
+    return request.pipe(
+      catchError(err => this.errorHandler(err.status)),
+      finalize(() => this.loading.removeLoading()),
+    );
+  }
+
+  getElement(elementSlug: string, depth: number): Observable<Element> {
+    return this.baseDecorator(
+      this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/${this.locale}/${depth}`, this.options) as Observable<any>);
+  }
+
+  getMyRole(): Observable<User> {
+    return this.baseDecorator(this.http.get(`${this.apiUrl}/${this.appName}/user`, this.options) as Observable<any>);
   }
 
   getElementHistory(elementSlug: string, period: string, shift: number): Observable<any> {
@@ -157,11 +165,6 @@ export class OhnApiService {
 
   getUserList(): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.appName}/user/list`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getMyRole(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/user`, this.options)
       .pipe(catchError(err => this.errorHandler(err.status)));
   }
 
