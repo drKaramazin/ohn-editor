@@ -1,1 +1,11 @@
-<json-editor [options]="editorOptions" [data]="current.currentElement | async"></json-editor>
+<ng-container *ngIf="state">
+  <div *ngIf="(current.currentElement | async)._cls === ElementClass.JSON; else regularState">
+    <json-editor [options]="editorOptions" [data]="state | parseJson"></json-editor>
+  </div>
+  <ng-template #regularState>
+    <div class="state">{{ state }}</div>
+  </ng-template>
+</ng-container>
+<div>
+  <json-editor [options]="editorOptions" [data]="current.currentElement | async"></json-editor>
+</div>

@@ -27,6 +27,7 @@ import { CredentialsComponent } from './pages/credentials/credentials.component'
 import { StructureComponent } from './pages/structure/structure.component';
 import { CurrentUserComponent } from './pages/current-user/current-user.component';
 import { UsersComponent } from './pages/users/users.component';
+import { ParseJsonPipe } from './pipes/parse-json.pipe';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { UsersComponent } from './pages/users/users.component';
     CredentialsComponent,
     StructureComponent,
     CurrentUserComponent,
-    UsersComponent
+    UsersComponent,
+    ParseJsonPipe
   ],
   imports: [
     BrowserModule,

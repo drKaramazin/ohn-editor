@@ -8,6 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Element } from '../models/element/element';
 import { User } from '../models/user';
 import { LoadingService } from './loading.service';
+import { State } from '../models/state';
 
 @Injectable({
   providedIn: 'root'
@@ -76,60 +77,53 @@ export class OhnApiService {
   //   }
   // }
 
-  getApp(): Observable<Element[]> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/app/${this.locale}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
 
-  setSettings(elementSlug: string, config: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/en`, { config: config }, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
+  // setSettings(elementSlug: string, config: any): Observable<any> {
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/en`, { config: config }, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getElementState(elementSlug: string): Observable<Element> {
+  //   let reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/state`;
+  //   if (localStorage.getItem('currentSmartContract')) {
+  //     reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/state/smart_contract/` + localStorage.getItem('currentSmartContract');
+  //   }
+  //   return this.http.get(reqString, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getElementAggregation(elementSlug: string): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/agg/count`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // setElementState(elementSlug: string, data: any): Observable<any> {
+  //
+  //   if (localStorage.getItem('currentSmartContract')) {
+  //     data['smart_contract'] = localStorage.getItem('currentSmartContract');
+  //   }
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/state`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // setElementBulkState(elementSlug: string, data: any): Observable<any> {
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/history`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  //
+  // setElementStateSc(elementSlug: string, data: any, smartContract?: string): Observable<any> {
+  //
+  //   if (smartContract !== undefined) {
+  //     data['smart_contract'] = smartContract;
+  //   }
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/state`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
 
-  getElementState(elementSlug: string): Observable<Element> {
-    let reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/state`;
-    if (localStorage.getItem('currentSmartContract')) {
-      reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/state/smart_contract/` + localStorage.getItem('currentSmartContract');
-    }
-    return this.http.get(reqString, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getElementAggregation(elementSlug: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/agg/count`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  setElementState(elementSlug: string, data: any): Observable<any> {
-
-    if (localStorage.getItem('currentSmartContract')) {
-      data['smart_contract'] = localStorage.getItem('currentSmartContract');
-    }
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/state`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  setElementBulkState(elementSlug: string, data: any): Observable<any> {
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/history`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getElementStateSc(elementSlug: string, smartContract: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/state/smart_contract/${smartContract}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  setElementStateSc(elementSlug: string, data: any, smartContract?: string): Observable<any> {
-
-    if (smartContract !== undefined) {
-      data['smart_contract'] = smartContract;
-    }
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/state`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
 
   baseDecorator<T>(request: Observable<T>): Observable<T> {
     this.loading.addLoading();
@@ -144,6 +138,10 @@ export class OhnApiService {
       this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/${this.locale}/${depth}`, this.options) as Observable<any>);
   }
 
+  getApp(): Observable<Element> {
+    return this.getElement('app', 1);
+  }
+
   getMyRole(): Observable<User> {
     return this.baseDecorator(this.http.get(`${this.apiUrl}/${this.appName}/user`, this.options) as Observable<any>);
   }
@@ -152,31 +150,37 @@ export class OhnApiService {
     return this.baseDecorator(this.http.get(`${this.apiUrl}/${this.appName}/user/list`, this.options) as Observable<any>);
   }
 
-  getElementHistory(elementSlug: string, period: string, shift: number): Observable<any> {
-
-    return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/history/period/${period}/${shift}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
+  getElementStateSc(elementSlug: string, smartContract: string): Observable<State> {
+    return this.baseDecorator(
+      this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/state/smart_contract/${smartContract}`, this.options) as Observable<any>
+    );
   }
 
-  getElementHistoryAll(elementSlug: string): Observable<any> {
-    let reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/history`;
-    if (localStorage.getItem('currentSmartContract')) {
-      reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/history/user/` + localStorage.getItem('currentSmartContract');
-    }
-    return this.http.get(reqString, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getUserListByRole(role: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/user/list/${role}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  grantUserRole(data: any): Observable<any> {
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/user/role`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
+  // getElementHistory(elementSlug: string, period: string, shift: number): Observable<any> {
+  //
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/history/period/${period}/${shift}`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getElementHistoryAll(elementSlug: string): Observable<any> {
+  //   let reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/history`;
+  //   if (localStorage.getItem('currentSmartContract')) {
+  //     reqString = `${this.apiUrl}/${this.appName}/${elementSlug}/history/user/` + localStorage.getItem('currentSmartContract');
+  //   }
+  //   return this.http.get(reqString, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getUserListByRole(role: string): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/user/list/${role}`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // grantUserRole(data: any): Observable<any> {
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/user/role`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
 
   // revokeUserRole(data: any): Observable<any> {
   //
@@ -196,67 +200,67 @@ export class OhnApiService {
   //     .pipe(catchError(err => this.errorHandler(err.status)));
   // }
 
-  getElementHistoryRange(elementSlug: string, fromDate: string, toDate: string): Observable<any> {
-
-    return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/history/date/${fromDate}/${toDate}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getLanguages(): Observable<any> {
-
-    return this.http.get(`${this.apiUrl}/localization/${this.appName}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getShareable(): Observable<any> {
-
-    return this.http.get(`${this.apiUrl}/${this.appName}/list/${this.locale}/shareable`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  grantShareable(data: any): Observable<any> {
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/blockchain/grant`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getShareableStatus(): Observable<any> {
-
-    return this.http.get(`${this.apiUrl}/${this.appName}/blockchain/status`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  revokeShareable(data: any): Observable<any> {
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/blockchain/revoke`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  confirmShareable(data: any): Observable<any> {
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/blockchain/confirm`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  addNewUser(uid: any): Observable<User>  {
-    uid['app_slug'] = this.appName;
-    return new Observable(subscriber => {
-      this.http.put(`${this.apiUrl}/${this.appName}/user`, uid, this.options)
-        .pipe(catchError(err => this.errorHandler(err.status)))
-        .subscribe(resp => subscriber.next(resp));
-    });
-  }
-
-  getElementAllPatients(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.appName}/blockchain/permissions/accounts`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
-
-  getAllUsersCSVReport(elementSlug: string): Observable<any> {
-
-    return this.http.get(`${this.apiUrl}/${this.appName}/user/report/${elementSlug}`, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
+  // getElementHistoryRange(elementSlug: string, fromDate: string, toDate: string): Observable<any> {
+  //
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/history/date/${fromDate}/${toDate}`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getLanguages(): Observable<any> {
+  //
+  //   return this.http.get(`${this.apiUrl}/localization/${this.appName}`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getShareable(): Observable<any> {
+  //
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/list/${this.locale}/shareable`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // grantShareable(data: any): Observable<any> {
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/blockchain/grant`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getShareableStatus(): Observable<any> {
+  //
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/blockchain/status`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // revokeShareable(data: any): Observable<any> {
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/blockchain/revoke`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // confirmShareable(data: any): Observable<any> {
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/blockchain/confirm`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // addNewUser(uid: any): Observable<User>  {
+  //   uid['app_slug'] = this.appName;
+  //   return new Observable(subscriber => {
+  //     this.http.put(`${this.apiUrl}/${this.appName}/user`, uid, this.options)
+  //       .pipe(catchError(err => this.errorHandler(err.status)))
+  //       .subscribe(resp => subscriber.next(resp));
+  //   });
+  // }
+  //
+  // getElementAllPatients(): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/blockchain/permissions/accounts`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
+  //
+  // getAllUsersCSVReport(elementSlug: string): Observable<any> {
+  //
+  //   return this.http.get(`${this.apiUrl}/${this.appName}/user/report/${elementSlug}`, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
 
   errorHandler(error: any): Observable<any> {
     switch (error) {
