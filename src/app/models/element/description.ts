@@ -32,9 +32,12 @@ export const DESCRIPTION: ClassDescription = {
   },
   [ElementClass.Numeric]: {
     icon: 'fas fa-square-root-alt',
-  }
+  },
+  [ElementClass.JSON]: {
+    icon: 'fas fa-file-code',
+  },
 };
 
 export const DEFAULT_DESCRIPTION: Describe = {
   icon: 'far fa-file',
-}
+};
