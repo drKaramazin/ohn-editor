@@ -36,6 +36,9 @@ export const DESCRIPTION: ClassDescription = {
   [ElementClass.JSON]: {
     icon: 'fas fa-file-code',
   },
+  [ElementClass.Report]: {
+    icon: 'fas fa-poll',
+  },
 };
 
 export const DEFAULT_DESCRIPTION: Describe = {

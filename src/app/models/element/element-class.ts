@@ -10,4 +10,5 @@ export enum ElementClass {
   Randomization = 'Element.Container.FieldElement.StringFieldElement.RandomizationElement',
   Numeric = 'Element.Container.FieldElement.NumericFieldElement',
   JSON = 'Element.Container.FieldElement.StringFieldElement.JSONElement',
+  Report = 'Element.Container.ReportElement',
 }
