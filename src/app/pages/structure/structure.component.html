@@ -2,7 +2,10 @@
   <mat-card-content>
 
     <div class="buttons-container">
-      <button mat-raised-button color="primary" [disabled]="isLoading | async" (click)="browseApp()">Browse app</button>
+      <button mat-raised-button color="primary" [disabled]="structure.isLoading | async" (click)="browseApp()">
+        <i class="fas fa-globe"></i>
+        Browse app
+      </button>
     </div>
 
   </mat-card-content>
@@ -13,20 +16,21 @@
     <div style="display: flex;">
 
       <div class="left-panel" [ngClass]="{
-            'current-element-exists': (this.current.currentElement | async) && !(isLoading | async)
+            'current-element-exists': (this.current.currentElement | async) && !(structure.isLoading | async)
           }">
-        <mat-progress-bar mode="indeterminate" *ngIf="isLoading | async; else treeBox"></mat-progress-bar>
+        <mat-progress-bar mode="indeterminate" *ngIf="structure.isLoading | async; else treeBox"></mat-progress-bar>
         <ng-template #treeBox>
-          <app-elements-tree [element]="element" *ngIf="element; else emptyBox"></app-elements-tree>
+          <app-elements-tree [element]="structure.structure.element" *ngIf="structure.structure.element; else emptyBox"></app-elements-tree>
           <ng-template #emptyBox>
             Empty here, please fill the inputs and click "Browse app"
           </ng-template>
         </ng-template>
       </div>
 
-      <div class="right-panel" [ngClass]="{
-            'current-element-exists': (this.current.currentElement | async) && !(isLoading | async)
-          }">
+      <div class="right-panel"
+           [ngClass]="{
+              'current-element-exists': (this.current.currentElement | async) && !(structure.isLoading | async)
+           }">
         <app-current-element></app-current-element>
       </div>
 

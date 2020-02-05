@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { JsonEditorOptions } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -22,6 +22,20 @@ export class CurrentElementComponent implements OnInit, OnDestroy {
   willBeDestroyed = new Subject();
 
   state: any;
+
+  @ViewChild('container', { read: ElementRef, static: true }) container;
+
+  @HostListener('window:scroll', ['$event']) scrollWindow() {
+    if (window.pageYOffset > 120) {
+      if (!this.container.nativeElement.classList.contains('fixed')) {
+        this.container.nativeElement.classList.add('fixed');
+      }
+    } else {
+      if (this.container.nativeElement.classList.contains('fixed')) {
+        this.container.nativeElement.classList.remove('fixed');
+      }
+    }
+  }
 
   constructor(
     private current: CurrentElementService,
