@@ -1,0 +1,10 @@
+<div class="header">Edit element <{{ data.element.element_slug }}></div>
+<div>
+  <json-editor [options]="editorOptions" [(ngModel)]="code"></json-editor>
+</div>
+<div class="actions">
+  <button mat-raised-button color="accent" (click)="apply()" [disabled]="isLoading | async">
+    <i class="fas fa-check"></i> Apply
+  </button>
+  <button mat-raised-button (click)="cancel()" [disabled]="isLoading | async">Cancel</button>
+</div>

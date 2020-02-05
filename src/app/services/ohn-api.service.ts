@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
 import { empty, Observable, Subject } from 'rxjs';
-// import { catchError, filter } from 'rxjs/operators';
 import { catchError, finalize } from 'rxjs/operators';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
-// import { OhnAuthService } from './ohn-auth.service';
 import { Element } from '../models/element/element';
 import { User } from '../models/user';
 import { LoadingService } from './loading.service';
 import { State } from '../models/state';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OhnApiService {
+
+  static readonly DEPTH = 999;
+  static readonly APP_ELEMENT_SLUG = 'app';
 
   events = new Subject<string>();
 
@@ -46,6 +48,7 @@ export class OhnApiService {
   constructor(
     public http: HttpClient,
     public loading: LoadingService,
+    private errorService: ErrorService,
     // public ohnAuth: OhnAuthService,
   ) {
     // events.subscribe('language:change', (lang) => {
@@ -124,22 +127,55 @@ export class OhnApiService {
   //     .pipe(catchError(err => this.errorHandler(err.status)));
   // }
 
+  errorHandler(status: number, statusText: string): Observable<any> {
+    switch (status) {
+      case 403:
+        console.log('Bad Token (logout)');
+        this.events.next('user:badToken');
+        this.events.next('loading:dismiss');
+        break;
+
+      default:
+        this.errorService.push(`Error ${status}: ${statusText}`);
+        break;
+    }
+
+    return empty();
+  }
 
   baseDecorator<T>(request: Observable<T>): Observable<T> {
     this.loading.addLoading();
     return request.pipe(
-      catchError(err => this.errorHandler(err.status)),
+      catchError((err: HttpErrorResponse) => this.errorHandler(err.status, err.statusText)),
       finalize(() => this.loading.removeLoading()),
     );
   }
 
-  getElement(elementSlug: string, depth: number): Observable<Element> {
+  getElement(elementSlug: string, depth: number = OhnApiService.DEPTH): Observable<Element> {
     return this.baseDecorator(
       this.http.get(`${this.apiUrl}/${this.appName}/${elementSlug}/${this.locale}/${depth}`, this.options) as Observable<any>);
   }
 
+  editElement(elementSlug: string, body: string, depth: number = OhnApiService.DEPTH): Observable<Element> {
+    return this.baseDecorator(new Observable<Element>(subscriber => {
+      this.http.put(`${this.apiUrl}/${this.appName}/${elementSlug}/${this.locale}`, body, this.options).subscribe(
+        () => {
+          this.getElement(elementSlug, depth).subscribe(
+            (resp) => subscriber.next(resp),
+            (error) => subscriber.error(error),
+            () => subscriber.complete(),
+          );
+        },
+        (error) => {
+          subscriber.error(error);
+          subscriber.complete();
+        },
+      );
+    }));
+  }
+
   getApp(): Observable<Element> {
-    return this.getElement('app', 1);
+    return this.getElement(OhnApiService.APP_ELEMENT_SLUG, OhnApiService.DEPTH);
   }
 
   getMyRole(): Observable<User> {
@@ -188,11 +224,11 @@ export class OhnApiService {
   //     .pipe(catchError(err => this.errorHandler(err.status)));
   // }
 
-  grantUserPermissions(data: any): Observable<any> {
-
-    return this.http.put(`${this.apiUrl}/${this.appName}/user/permissions`, data, this.options)
-      .pipe(catchError(err => this.errorHandler(err.status)));
-  }
+  // grantUserPermissions(data: any): Observable<any> {
+  //
+  //   return this.http.put(`${this.apiUrl}/${this.appName}/user/permissions`, data, this.options)
+  //     .pipe(catchError(err => this.errorHandler(err.status)));
+  // }
 
   // revokeUserPermissions(data: any): Observable<any> {
   //
@@ -261,21 +297,5 @@ export class OhnApiService {
   //   return this.http.get(`${this.apiUrl}/${this.appName}/user/report/${elementSlug}`, this.options)
   //     .pipe(catchError(err => this.errorHandler(err.status)));
   // }
-
-  errorHandler(error: any): Observable<any> {
-    switch (error) {
-      case 403:
-        console.log('Bad Token (logout)');
-        this.events.next('user:badToken');
-        this.events.next('loading:dismiss');
-        break;
-
-      default:
-        // code...
-        break;
-    }
-
-    return empty();
-  }
 
 }

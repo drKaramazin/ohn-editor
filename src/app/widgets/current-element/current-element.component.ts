@@ -2,11 +2,13 @@ import { Component, HostListener, OnDestroy, OnInit, ViewChild, ElementRef } fro
 import { JsonEditorOptions } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { MatDialog } from '@angular/material';
 
 import { CurrentElementService } from '../../services/current-element.service';
 import { OhnApiService } from '../../services/ohn-api.service';
 import { AuthService } from '../../services/auth.service';
 import { ElementClass } from '../../models/element/element-class';
+import { EditElementComponent } from '../../dialogs/edit-element/edit-element.component';
 
 @Component({
   selector: 'app-current-element',
@@ -41,6 +43,7 @@ export class CurrentElementComponent implements OnInit, OnDestroy {
     private current: CurrentElementService,
     private ohnApi: OhnApiService,
     private auth: AuthService,
+    private dialog: MatDialog,
   ) {}
 
   setEditorOptions() {
@@ -55,9 +58,17 @@ export class CurrentElementComponent implements OnInit, OnDestroy {
     this.current.currentElement.pipe(takeUntil(this.willBeDestroyed), filter(el => !!el)).subscribe(element => {
       this.state = null;
       this.ohnApi.getElementStateSc(element.element_slug, this.auth.selectedSC.value).subscribe(state => {
-        this.state = state.value.value;
-        console.log(this.state);
+        this.state = state.value ? state.value.value : null;
       });
+    });
+  }
+
+  editElement() {
+    const dialogRef = this.dialog.open(EditElementComponent, {
+      width: '90%',
+      data: {
+        element: this.current.currentElement.value,
+      },
     });
   }
 

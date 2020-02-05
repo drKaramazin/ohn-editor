@@ -1,9 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 import { Element } from '../../models/element/element';
 import { CurrentElementService } from '../../services/current-element.service';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 interface ElementNode {
   expandable: boolean;
@@ -19,19 +21,24 @@ interface ElementNode {
   templateUrl: './elements-tree.component.html',
   styleUrls: ['./elements-tree.component.scss']
 })
-export class ElementsTreeComponent implements OnInit {
+export class ElementsTreeComponent implements OnInit, OnDestroy {
+
+  willBeDestroyed = new Subject();
 
   // tslint:disable-next-line:variable-name
-  private _element: Element;
+  private _element: BehaviorSubject<Element>;
 
-  @Input() set element(element: Element) {
+  @Input() set element(element: BehaviorSubject<Element>) {
     this._element = element;
     if (this.element) {
-      this.dataSource.data = [this.element];
+      this.element.pipe(takeUntil(this.willBeDestroyed)).subscribe((val) => {
+        console.log('Changed', val);
+        this.dataSource.data = [val];
+      });
     }
   }
 
-  get element(): Element {
+  get element(): BehaviorSubject<Element> {
     return this._element;
   }
 
@@ -83,7 +90,7 @@ export class ElementsTreeComponent implements OnInit {
   }
 
   hover(node: ElementNode) {
-    this.selectedElement = this.getElement(this.element, node.slug);
+    this.selectedElement = this.getElement(this.element.value, node.slug);
   }
 
   leave() {
@@ -91,7 +98,12 @@ export class ElementsTreeComponent implements OnInit {
   }
 
   click(node: ElementNode) {
-    this.current.currentElement.next(this.getElement(this.element, node.slug));
+    this.current.currentElement.next(this.getElement(this.element.value, node.slug));
+  }
+
+  ngOnDestroy(): void {
+    this.willBeDestroyed.next();
+    this.willBeDestroyed.complete();
   }
 
 }

@@ -15,7 +15,9 @@ import { MatCardModule, MatRadioModule, MatTabsModule } from '@angular/material'
 import { MatProgressBarModule } from '@angular/material';
 import { MdePopoverModule } from '@material-extended/mde';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NgJsonEditorModule } from 'ang-jsoneditor'
+import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material';
 
 import { OhnApiService } from './services/ohn-api.service';
 import { OhnAuthService } from './services/ohn-auth.service';
@@ -28,6 +30,7 @@ import { StructureComponent } from './pages/structure/structure.component';
 import { CurrentUserComponent } from './pages/current-user/current-user.component';
 import { UsersComponent } from './pages/users/users.component';
 import { ParseJsonPipe } from './pipes/parse-json.pipe';
+import { EditElementComponent } from './dialogs/edit-element/edit-element.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +42,11 @@ import { ParseJsonPipe } from './pipes/parse-json.pipe';
     StructureComponent,
     CurrentUserComponent,
     UsersComponent,
-    ParseJsonPipe
+    ParseJsonPipe,
+    EditElementComponent,
+  ],
+  entryComponents: [
+    EditElementComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +66,8 @@ import { ParseJsonPipe } from './pipes/parse-json.pipe';
     NgJsonEditorModule,
     MatTabsModule,
     MatRadioModule,
+    MatDialogModule,
+    MatSnackBarModule,
   ],
   providers: [
     OhnApiService,

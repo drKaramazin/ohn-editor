@@ -1,13 +1,32 @@
 <div #container class="container">
-  <ng-container *ngIf="state">
-    <div *ngIf="(current.currentElement | async)._cls === ElementClass.JSON; else regularState">
-      <json-editor [options]="editorOptions" [data]="state | parseJson"></json-editor>
-    </div>
-    <ng-template #regularState>
-      <div class="state">{{ state }}</div>
-    </ng-template>
-  </ng-container>
+
   <div>
+    <button mat-raised-button color="accent" (click)="editElement()"><i class="far fa-edit"></i> Edit</button>
+  </div>
+
+  <div>
+    <h3>State of the current smart contract</h3>
+
+    <ng-container *ngIf="state; else noState">
+      <ng-container [ngSwitch]="(current.currentElement | async)._cls">
+        <div *ngSwitchCase="ElementClass.JSON">
+          <json-editor [options]="editorOptions" [data]="state | parseJson"></json-editor>
+        </div>
+        <div *ngSwitchCase="ElementClass.Report" class="state">
+          <json-editor [options]="editorOptions" [data]="state"></json-editor>
+        </div>
+        <div *ngSwitchDefault class="state">{{ state }}</div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noState>
+      <span>None</span>
+    </ng-template>
+  </div>
+
+  <div>
+    <h3>Element</h3>
     <json-editor [options]="editorOptions" [data]="current.currentElement | async"></json-editor>
   </div>
+
 </div>
